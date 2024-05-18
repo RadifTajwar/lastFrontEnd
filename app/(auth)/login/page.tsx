@@ -71,7 +71,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<vo
 
   return (
     <>
-      <div className={`${styles.login_page}`} >
+      <div className={`${styles.login_page}`} style={{ background: 'linear-gradient(90deg, #F5FCF4 0%, #E5F8E5 100%)',height:'94vh' }} >
         <div className="login flex justify-center  w-9/12 mx-auto " >
 
           <div className={` ${styles.form} flex justify-center items-center relative mt-10`}>

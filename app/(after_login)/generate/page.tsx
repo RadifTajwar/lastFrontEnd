@@ -1,20 +1,22 @@
 "use client"
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import workingGif from '../../../public/HomePage/giphy.gif';
 import Logo from '../../../public/Landing_Page_image/Logo.png';
 import { usePageContext } from '../story/context/PageContext';
+import StoryGenerate from './components/storyGenerate';
 import VoiceGenerate from './components/voiceGenerate';
 const axios = require('axios');
-import StoryGenerate from './components/storyGenerate';
 export default function page() {
     const { pageTitle, pageNumber, setPage } = usePageContext();
-    const [storyContext,setStoryContext]=useState<string[]>([]);
+    const [storyContext, setStoryContext] = useState<string[]>([]);
     const [onceGone, setOnceGone] = useState(true)
     const [storyScenario, setStoryScenario] = useState<string[]>([]);
     const [completeStory, setCompleteStory] = useState(true)
     const [title, setTitle] = useState('')
     const [totalComplete, setTotalComplete] = useState(0);
+    const [totalVComplete, setTotalVComplete] = useState(0);
     const [percentage, setPercentage] = useState(0)
     const [length, setLength] = useState(null);
     useEffect(() => {
@@ -25,46 +27,66 @@ export default function page() {
                     // Fetch storyPrompt from local storage
 
                     const storyPrompt = localStorage.getItem('storyPrompt');
+                    const style = localStorage.getItem('style');
                     // console.log(storyPrompt);
 
                     if (storyPrompt) {
                         // Make a POST request with Axios
-                        const response = await axios.post('http://localhost:5000/api/story/promptGenerate', { prompt: storyPrompt });
+                        const response = await axios.post('http://localhost:5000/api/story/promptGenerate', { prompt: storyPrompt,style:style });
                         const res = response.data.success
                         // console.log(res)
                         // Handle response
+                    //    const  res="**Samira, the Brave Knight**"
+                    //    console.log(res)
                         const titleRegex = /Title:\s*(.*)/;
                         const titleMatch = res.match(titleRegex);
+
+                        const lineRegex = /.*\*\*(.*)\*\*/;
+                        
+                        const match = res.match(lineRegex);
+
 
 
                         if (titleMatch) {
                             const title = titleMatch[1];
-                            setTitle(title);
+                            const cleanedTitle = title.replace(/\*+/g, ''); // Removes all stars
+                            setTitle(cleanedTitle);
 
                             // console.log("Title: ", title);
+                            localStorage.setItem('pageTitle', cleanedTitle);
+
+                            setPage(cleanedTitle, 0)
+                        } else if (match) {
+                            const title = match[1].trim(); // Extracted line
+                         
+                            setTitle(title);
+
+                            // console.log("Title: ", storyPrompt);
                             localStorage.setItem('pageTitle', title);
 
                             setPage(title, 0)
-                        } else {
+                        }
+                        else {
                             const title = storyPrompt;
                             setTitle(storyPrompt);
 
                             // console.log("Title: ", storyPrompt);
-                            localStorage.setItem('pageTitle', storyPrompt);
+                            localStorage.setItem('pageTitle', title);
 
                             setPage(storyPrompt, 0)
                         }
 
 
                         const storyLines = res.split(/\r?\n/).filter(line => line.trim() !== '');
-
-                        storyLines.shift();
+                        if (titleMatch || match) {
+                            storyLines.shift();
+                        }
                         // console.log("now storyLines is ",storyLines);
                         try {
-                            const response = await axios.post('http://localhost:5000/api/story/diffusionGenerate', { story: storyLines });
+                            const response = await axios.post('http://localhost:5000/api/story/diffusionGenerate', { story: storyLines,style:style });
                             const story = response.data.success.split(/\r?\n/).filter(line => line.trim() !== '');
                             const stories = story.map(line => line.replace(/^\d+\)\s*/, '').trim());
-
+                            stories.shift();       
                             // console.log("Actual Story lines:", stories);
                             setStoryContext(stories);
 
@@ -76,7 +98,7 @@ export default function page() {
 
                         // console.log("Story lines:", story);
 
-                        
+
 
                         // Execute the regex on the markdown string
 
@@ -187,7 +209,7 @@ export default function page() {
 
                                 {
                                     storyScenario.map((line, index) => (
-                                        <VoiceGenerate key={index} index={index} line={line} title={title} />
+                                        <VoiceGenerate key={index} index={index} line={line} title={title} setTotalVComplete={setTotalVComplete}/>
                                     ))
                                 }
 
@@ -236,17 +258,19 @@ export default function page() {
 
 
                     {
-                        !completeStory && (
+                        length == totalComplete && length==totalVComplete && (
 
                             <>
+                            <Link href="/story"> 
                                 <div className='text-center mb-32 mt-10 flex justify-center items-center '>
                                     <button className="phx-submit-loading:opacity-75  rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring--500 focus:ring-offset-2 ">
-                                        Go to Story {length} <svg className="mt-0.5 ml-2 -mr-1 stroke-indigo-200 stroke-2" fill="none" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+                                        Go to Story  <svg className="mt-0.5 ml-2 -mr-1 stroke-indigo-200 stroke-2" fill="none" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
                                             <path className="opacity-0 transition group-hover:opacity-100" d="M0 5h7"></path>
                                             <path className="transition group-hover:translate-x-[3px]" d="M1 1l4 4-4 4"></path>
                                         </svg>
                                     </button>
                                 </div>
+                                </Link>
                             </>
                         )
                     }

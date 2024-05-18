@@ -111,8 +111,8 @@ export default function SignUpPage() {
 
   return (
     <>
-      <div className={`${styles.signup_page} flex justify-center `} >
-        <div className="signUp_section w-9/12  flex mt-2 justify-between">
+      <div className={`${styles.signup_page} flex justify-center `}  style={{ background: 'linear-gradient(90deg, #F5FCF4 0%, #E5F8E5 100%)',height:'94vh' }} >
+        <div className="signUp_section w-9/12  flex mt-10 justify-between">
           <div className="left w-7/12">
             <Image src={hero} alt='hero' width={600} />
           </div>

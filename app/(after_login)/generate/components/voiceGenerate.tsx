@@ -4,13 +4,14 @@ interface VoiceGenerateProps {
     index: number;
     line: string;
     title:string;
+    setTotalVComplete: React.Dispatch<React.SetStateAction<number>>;
 }
 
 
-const VoiceGenerate: React.FC<VoiceGenerateProps> = ({ index, line,title }) => {
+const VoiceGenerate: React.FC<VoiceGenerateProps> = ({ index, line,title ,setTotalVComplete}) => {
 
     const [percentage,setPercentage]=useState(0);
-    console.log(line);
+    // console.log(line);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,6 +25,7 @@ const VoiceGenerate: React.FC<VoiceGenerateProps> = ({ index, line,title }) => {
                 const status=response.data.success;
                 if(status=='200'){
                         setPercentage(100);
+                        setTotalVComplete (prevTotalComplete => prevTotalComplete + 1); // Update totalComplete state
                 } // Set percentage to 100 after successful axios call
             } catch (error) {
                 console.error('Error sending POST request:', error);

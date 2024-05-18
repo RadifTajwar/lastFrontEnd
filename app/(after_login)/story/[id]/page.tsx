@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { usePageContext } from '../context/PageContext';
+
+import Link from "next/link";
 export default function page({ params }) {
   const [fileContent, setFileContent] = useState('');
   const router = useRouter();
@@ -62,16 +64,8 @@ export default function page({ params }) {
   console.log(typeof pageNumber); 
   return (
     <>
-      <div className="fixed top-0 left-0 h-screen w-screen">
-        <Image
-          src={`/story/user/${pageTitle}/images/${id}.jpg`}
-          alt=""
-          layout="fill"
-          
-          quality={100} // Adjust quality as needed
-        />
-      </div>
-      <div className="absolute m-12 rounded-md bg-gray-900 text-white bg-opacity-50 text-left left-12 max-w-sm">
+     <div className="body" style={{ background: 'linear-gradient(90deg, #F5FCF4 0%, #E5F8E5 100%)' , height: '100vh'}}>
+     <div className="absolute m-12 rounded-md bg-gray-900 text-white bg-opacity-50 text-left left-12 max-w-sm " style={{zIndex:'999'}}>
         <button
           type="button"
           phx-click="edit-page"
@@ -84,7 +78,7 @@ export default function page({ params }) {
           </p>
         </button>
 
-        <div className="flex">
+        <div className="flex " >
           <div className="mx-auto my-4" data-phx-id="c4-phx-F8yYLI5PnoY2P20y" data-phx-component="4" id="audio-component">
             <div>
               <div id="audio-playing" className="mx-auto my-4 text-right">
@@ -128,6 +122,35 @@ export default function page({ params }) {
           </>
         )
       }
+      {
+        id== (parseInt(length,10)-1) && (
+          <>
+          
+          <Link href="/pdf"><button
+        id="next-page-1"
+        type="button"
+        onClick={handleNextButtonClick}
+        className="hover:cursor-alias absolute hover:bg-gray-100 flex items-center hover:text-gray-600 text-gray-700 border-2 border-gray-300 shadow-sm group bg-white px-4 py-3 rounded-full z-50 top-1/2 -mt-12 right-6"
+      >
+        Show Pdf
+        <svg
+          className="inline-flex mt-0.5 ml-2 -mr-1 stroke-gray-600 stroke-1"
+          fill="none"
+          width="30"
+          height="30"
+          viewBox="0 0 10 10"
+          aria-hidden="true"
+        >
+          <path className="opacity-0 transition group-hover:opacity-100" d="M0 5h7"></path>
+          <path className="transition group-hover:translate-x-[3px]" d="M1 1l4 4-4 4"></path>
+        </svg>
+      </button>
+       </Link>
+          </>
+          
+        )
+        
+      }
      
 
       {
@@ -149,6 +172,15 @@ export default function page({ params }) {
           </>
         )
       }
+     <Image
+         src={`/story/user/${pageTitle}/images/${id}.jpg`}
+         layout="fill"
+         objectFit="contain"
+         alt={pageTitle}
+         quality={100} // Adjust quality as needed
+         style={{zIndex:'0'}}
+        />
+     </div>
      
     </>
   )

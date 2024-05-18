@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import React, { useEffect, useState } from 'react';
 interface StoryGenerateProps {
     index: number;
     line: string;
@@ -14,19 +13,23 @@ const StoryGenerate: React.FC<StoryGenerateProps> = ({ index, line, title, story
     
     useEffect(() => {
         const fetchData = async () => {
+            const style = localStorage.getItem('style');
             try {
                 const requestBody = {
                     story: story,
                     text: line,
                     id: index,
-                    title: title
+                    title: title,
+                    style:style
                 };
                 const response = await axios.post('http://localhost:5000/api/generate/images', requestBody);
                 const status = response.data.success;
+              
                 if (status === '200') {
                     setPercentage(100);
                     setTotalComplete(prevTotalComplete => prevTotalComplete + 1); // Update totalComplete state
-                    
+                    console.log(response.data.id)
+                    console.log(response.data.fileName)
                 }
             } catch (error) {
                 console.error('Error sending POST request:', error);

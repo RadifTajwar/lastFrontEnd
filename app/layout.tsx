@@ -28,7 +28,7 @@ export default function RootLayout({
         {['/', '/login', '/signup'].includes(pathName) && (
           <div className="header " style={{ background: 'linear-gradient(90deg, #F5FCF4 0%, #E5F8E5 100%)' }}>
             {/* header Part start */}
-            <div className="header_logo mx-auto w-9/12 flex justify-between" style={{ padding: '10px 0px' }} >
+            <div className="header_logo mx-auto w-9/12 flex justify-between" style={{ padding: '6.5px 0px' }} >
               {/* logo Part start */}
 
               <div className="logo me-7">
